@@ -204,6 +204,42 @@
             }
         }
 
+        /* 音乐控制按钮 */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            animation: fadeIn 1s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .music-btn.playing {
+            animation: rotate 3s linear infinite, fadeIn 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         /* 移动端优化 */
         @media (max-width: 768px) {
             .main-text {
@@ -220,10 +256,25 @@
                 font-size: 18px;
                 padding: 12px 30px;
             }
+
+            .music-btn {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 背景音乐 -->
+    <audio id="bgMusic" loop>
+        <source src="zf.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 音乐控制按钮 -->
+    <div class="music-btn" id="musicBtn" title="点击播放音乐">🎵</div>
     <!-- 星星背景 -->
     <div class="stars" id="stars"></div>
     
@@ -232,10 +283,10 @@
 
     <!-- 主要内容 -->
     <div class="container">
-        <div class="main-text">小张，对不起</div>
+        <div class="main-text">离小戴回国还有30天</div>
         <div class="sub-text">
-            真的很抱歉<br>
-            希望你能原谅我<br>
+            期待与你相见<br>
+            想你啦<br>
             ❤️
         </div>
         <button class="forgive-btn" id="forgiveBtn">点这里</button>
@@ -245,6 +296,32 @@
     <div class="gesture-hint">👆 轻触屏幕看惊喜</div>
 
     <script>
+        // 音乐控制
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        // 点击音乐按钮
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.innerHTML = '🎵';
+                musicBtn.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                bgMusic.play().catch(err => {
+                    console.log('播放失败:', err);
+                    alert('音乐播放失败，请确保已添加音乐文件');
+                });
+                musicBtn.innerHTML = '🎶';
+                musicBtn.classList.add('playing');
+                isPlaying = true;
+            }
+        });
+
+        // 不自动播放音乐，等待用户点击按钮
+
         // 创建随机星星
         function createStars() {
             const starsContainer = document.getElementById('stars');
@@ -319,9 +396,20 @@
             
             // 改变按钮文字
             const btn = e.target;
-            btn.innerHTML = '谢谢你 ❤️';
+            btn.innerHTML = '想你啦 ❤️';
             btn.style.background = '#ff6b6b';
             btn.style.color = 'white';
+
+            // 播放音乐
+            if (!isPlaying) {
+                bgMusic.play().then(() => {
+                    musicBtn.innerHTML = '🎶';
+                    musicBtn.classList.add('playing');
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log('音乐播放失败:', err);
+                });
+            }
 
             // 创建多个烟花
             for (let i = 0; i < 5; i++) {
@@ -331,6 +419,13 @@
                         Math.random() * window.innerHeight
                     );
                 }, i * 200);
+            }
+
+            // 爆发大量爱心
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createHeart();
+                }, i * 50);
             }
 
             // 改变背景渐变
