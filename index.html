@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>给小张的话</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 爱心漂浮动画 */
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            font-size: 30px;
+            animation: float 6s infinite ease-in;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                bottom: -50px;
+                opacity: 1;
+                transform: translateX(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                bottom: 100vh;
+                opacity: 0;
+                transform: translateX(100px) rotate(360deg);
+            }
+        }
+
+        /* 主要内容容器 */
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        /* 主标题动画 */
+        .main-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            animation: fadeInBounce 1.5s ease-out forwards;
+            margin-bottom: 30px;
+            letter-spacing: 8px;
+        }
+
+        @keyframes fadeInBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-50px);
+            }
+            50% {
+                transform: scale(1.1) translateY(0);
+            }
+            70% {
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 副标题 */
+        .sub-text {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            animation: fadeIn 2s ease-out 1s forwards;
+            line-height: 1.8;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 闪烁的星星 */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 手势提示 */
+        .gesture-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            animation: bounce 2s infinite;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 2s forwards, bounce 2s infinite 3s;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        /* 点击后的特效 */
+        .forgive-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            font-size: 20px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 1.5s forwards;
+            font-weight: bold;
+        }
+
+        .forgive-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .forgive-btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* 烟花效果 */
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .main-text {
+                font-size: 36px;
+                letter-spacing: 5px;
+            }
+            
+            .sub-text {
+                font-size: 16px;
+                padding: 0 20px;
+            }
+            
+            .forgive-btn {
+                font-size: 18px;
+                padding: 12px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 星星背景 -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- 漂浮的爱心 -->
+    <div class="hearts" id="hearts"></div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <div class="main-text">小张，对不起</div>
+        <div class="sub-text">
+            真的很抱歉<br>
+            希望你能原谅我<br>
+            ❤️
+        </div>
+        <button class="forgive-btn" id="forgiveBtn">点这里</button>
+    </div>
+
+    <!-- 手势提示 -->
+    <div class="gesture-hint">👆 轻触屏幕看惊喜</div>
+
+    <script>
+        // 创建随机星星
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 创建漂浮爱心
+        function createHeart() {
+            const heartsContainer = document.getElementById('hearts');
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            heartsContainer.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+
+        // 持续生成爱心
+        setInterval(createHeart, 800);
+
+        // 创建烟花效果
+        function createFirework(x, y) {
+            const colors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4d96ff', '#ff9ff3'];
+            const particlesCount = 30;
+
+            for (let i = 0; i < particlesCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                const angle = (Math.PI * 2 * i) / particlesCount;
+                const velocity = 50 + Math.random() * 50;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                particle.style.animation = 'explode 1s ease-out forwards';
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+
+        // 点击屏幕创建烟花
+        document.body.addEventListener('click', (e) => {
+            createFirework(e.clientX, e.clientY);
+        });
+
+        // 按钮点击事件
+        document.getElementById('forgiveBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // 改变按钮文字
+            const btn = e.target;
+            btn.innerHTML = '谢谢你 ❤️';
+            btn.style.background = '#ff6b6b';
+            btn.style.color = 'white';
+
+            // 创建多个烟花
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFirework(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 200);
+            }
+
+            // 改变背景渐变
+            document.body.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+        });
+
+        // 初始化
+        createStars();
+        for (let i = 0; i < 10; i++) {
+            createHeart();
+        }
+
+        // 阻止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
